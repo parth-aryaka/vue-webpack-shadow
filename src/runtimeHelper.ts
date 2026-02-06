@@ -1,12 +1,7 @@
-export function injectStylesIntoShadowRoot(styles: string) {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = styles;
+/**
+ * @deprecated This file is deprecated. Use the runtime helper from 'vue-webpack-shadow/runtime' instead.
+ * Import { useShadowStyle } from 'vue-webpack-shadow/runtime'
+ */
 
-    // Find the nearest ShadowRoot and append the style
-    let root = document.querySelector(':host')?.getRootNode() as ShadowRoot;
-    if (root instanceof ShadowRoot) {
-        root.appendChild(styleElement);
-    } else {
-        console.warn('No shadow root found for style injection.');
-    }
-}
+// Empty export to maintain backward compatibility
+export {};
