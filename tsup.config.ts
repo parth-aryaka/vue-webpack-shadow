@@ -11,5 +11,10 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   outDir: 'dist',
+  outExtension({ format }) {
+    return {
+      js: format === 'cjs' ? '.cjs' : '.mjs',
+    };
+  },
   external: ['webpack', '@vue/compiler-sfc'],
 });

@@ -33,10 +33,6 @@ export class VueWebpackShadowPlugin {
 
     // Hook into the normal module loader to transform Vue files
     compiler.hooks.compilation.tap(pluginName, (compilation) => {
-      const NormalModule = compilation.moduleGraph.constructor.name === 'ModuleGraph'
-        ? require('webpack/lib/NormalModule')
-        : require('webpack/lib/NormalModule');
-
       compilation.hooks.normalModuleLoader.tap(
         pluginName,
         (loaderContext: any, module: any) => {
@@ -73,7 +69,7 @@ export class VueWebpackShadowPlugin {
         // Parse the Vue SFC
         const { descriptor } = parse(source, { filename: module.resource });
 
-        // Find shadow style blocks
+        // Find shadow style blocks (plain CSS only, no preprocessors or scoped styles)
         const shadowStyles = descriptor.styles.filter(
           (style) => style.attrs.shadow !== undefined && !style.attrs.scoped && !style.lang
         );
@@ -126,7 +122,7 @@ function transformSource(
       `const __cleanup${index}__ = useShadowStyle(${importName}, '${requestId}');`
     );
     styleSetupCalls.push(
-      `onMounted(() => { __cleanup${index}__.inject(__getCurrentInstance()?.vnode?.el); });`
+      `onMounted(() => { __cleanup${index}__.inject(getCurrentInstance()?.vnode?.el); });`
     );
     styleSetupCalls.push(
       `onBeforeUnmount(__cleanup${index}__);`
@@ -147,7 +143,7 @@ function transformSource(
     const setupCode = [
       '\n<script setup>',
       "import { useShadowStyle } from 'vue-webpack-shadow/runtime';",
-      "import { onMounted, onBeforeUnmount, getCurrentInstance as __getCurrentInstance } from 'vue';",
+      "import { onMounted, onBeforeUnmount, getCurrentInstance } from 'vue';",
       ...styleImports,
       '',
       ...styleSetupCalls,
@@ -164,7 +160,7 @@ function transformSource(
     // Build imports
     const imports = [
       "import { useShadowStyle } from 'vue-webpack-shadow/runtime';",
-      "import { onMounted, onBeforeUnmount, getCurrentInstance as __getCurrentInstance } from 'vue';",
+      "import { onMounted, onBeforeUnmount, getCurrentInstance } from 'vue';",
       ...styleImports,
     ].join('\n') + '\n\n';
 

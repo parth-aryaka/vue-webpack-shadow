@@ -9,9 +9,9 @@
  * 
  * @param cssText - The CSS text to inject
  * @param requestId - A unique identifier for this style injection (typically the file path)
- * @returns A cleanup function to remove the style tag
+ * @returns A cleanup function with an inject method
  */
-export function useShadowStyle(cssText: string, requestId: string): () => void {
+export function useShadowStyle(cssText: string, requestId: string): (() => void) & { inject: (mountedElement: HTMLElement) => void } {
   let styleElement: HTMLStyleElement | null = null;
   let currentElement: HTMLElement | null = null;
 
